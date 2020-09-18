@@ -1,0 +1,32 @@
+server:
+  port: 8899
+servlet:
+  context-path: /
+  encoding: UTF-8
+
+
+spring:
+  devtools:
+    restart:
+      enabled: true #设置开启热部署
+  resources:
+    static-locations:  classpath:static/ #配置静态资源,直接定位到static目录
+  datasource:  #配置数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/teachingtest?characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
+
+#配置MyBatis-plus
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zh.springboot.demo.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印日志
+
+freemarker:
+  cache:  false #页面不加载缓存，即时生效
+
+logging: #配置文件所在路径
+  config: classpath:log4j2.xml

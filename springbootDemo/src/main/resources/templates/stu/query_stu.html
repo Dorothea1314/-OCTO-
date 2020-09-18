@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    button{
+        padding-left: 0px;
+        float: left;
+        background-color: aquamarine;
+    }
+</style>
+<script src="/js/jquery-3.4.1.js"></script>
+<body>
+
+<form action="/stu/paging" method="get" id="myForm">
+    <div><h3>查询学生</h3></div>
+
+    <div>
+        <ul style="list-style: none">
+            <li><span>学历：</span>
+                <select name="edu">
+                    <option value="0">不限</option>
+                    <option value="1">中专</option>
+                    <option value="2">大专</option>
+                    <option value="3">本科</option>
+                    <option value="4">研究生</option>
+                    <option value="5">其他</option>
+                </select>
+            </li>
+            <li><span>性别：</span><label><input type="radio" name="sex" value="0">&nbsp;全部</label>
+                <label><input type="radio" name="sex" value="1">&nbsp;男</label>
+                <label><input type="radio" name="sex" value="2">&nbsp;女</label>
+            </li>
+            <li>
+                <input type="submit" value="查询学生">
+                <!--隐藏域，当前页面--> <!--disabled 失效 后台不需要-->
+                <input id="current" type="hidden" name="current" th:value="${page!=null?page.current:1}">
+                <input id="page" type="hidden" th:value="${page!=null?page.pages:0}" disabled>
+            </li>
+        </ul>
+    </div>
+</form>
+<div>
+    <table style="width: 600px;border: black 1px solid">
+        <caption>学生信息表</caption>
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>姓名</td>
+            <td>性别</td>
+            <td>身份证</td>
+            <td>专业</td>
+            <td>学历</td>
+            <td>出生日期</td>
+        </tr>
+        </thead>
+        <tbody>
+        <!--records 查询记录-->
+        <tr th:each="stu:${page!=null?page.records:null}">
+            <td th:text="${stu.stuId}" id="stuId"></td>
+            <td th:text="${stu.name}"></td>
+            <td th:switch="${stu.sex}">
+                <span th:case="1">男</span>
+                <span th:case="2">女</span>
+                <span th:case="*">未知状态</span>
+            </td>
+            <td th:text="${stu.idCard}"></td>
+            <td th:text="${stu.subject}"></td>
+            <td th:switch="${stu.edu}">
+                <span th:case="1">中专</span>
+                <span th:case="2">大专</span>
+                <span th:case="3">本科</span>
+                <span th:case="4">硕士</span>
+                <span th:case="5">其他</span>
+            </td>
+            <td th:text="${#dates.format(stu.birthday,'yyyy-MM-dd')}"></td>
+            <!-- <td>
+                 &lt;!&ndash;物理删除&ndash;&gt;
+                 <a th:href="${'/stu/delete?stu_id='+stu.stuId}">删除</a>
+                 <a href="#">修改</a>
+                 &lt;!&ndash;<a href="#">详情</a>
+                 &lt;!&ndash;逻辑删除&ndash;&gt;
+                 <a href="#">停用|禁用</a>
+                 <a href="#">复用|启动</a>&ndash;&gt;
+             </td>-->
+            <!--dataSet- 是固定的，后面stu-id 是自己定义的 -->
+            <td th:data-stu-id="${stu.stuId}">
+
+                <a href='/stu/update/'>修改</a>&nbsp;&nbsp;
+                <!--this指当前标签-->
+                <a href='javacript:;' onclick="deleteStu(this)">删除</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div th:if="${page!=null}">
+        <ul style="list-style: none">
+            <li>共<span th:text="${page.pages}"></span>页/第<span th:text="${page.current}" style="color:red;"></span>页</li>
+            <li>
+                <button id="first" type="button" onclick="gotoPage(1)">第一页</button>
+            </li>
+            <li>
+                <button id="pre" type="button" onclick="gotoPage(2)">上一页</button>
+            </li>
+            <li>
+                <button id="next" type="button" onclick="gotoPage(3)">下一页</button>
+            </li>
+            <li>
+                <button id="last" type="button" onclick="gotoPage(4)">最后一页</button>
+            </li>
+        </ul>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+//当前页
+        var current=Number($('#current').val());
+        if (1==current){
+            $('#first').attr('disabled',true);
+            $('#pre').attr('disabled',true);
+        }
+        //总页数
+        var pages=$('#page').val();
+        if(current==pages){
+            $('#next').attr('disabled',true);
+            $('#last').attr('disabled',true);
+        }
+    });
+    /**
+     * 跳转到第几页
+     * 说明：
+     * state表示一个状态
+     * 1：表示跳转第一页
+     * 2：表示跳转上一页
+     * 3：表示跳转下一页
+     * 4：表示最后一页
+     */
+    function gotoPage(state) {
+       //当前页号
+        //alert(this.toString());
+        var current = Number($('#current').val());
+        if (1== state){
+            current=1;
+        }else if(2==state){
+            current-=1;
+        }else if(3==state){
+            current+=1;
+        }else if (4==state){
+            current=$('#page').val();
+        }else{
+            alert("数据提交失败！");
+            return;
+        }
+        //重新设定当前页号
+        $('#current').val(current);
+        //提交form表单
+        $('#myForm').submit();
+    };
+    //获取请求参数，即查询条件：sex,edu
+    //var sex=[[${param.sex!=null?param.sex[0]:0}]];
+    //var edu=[[${param.edu!=null?param.edu[0]:0}]];
+    //利用js代码，默认选中学历下拉选项，性别单选框
+    //$('select[name="edu"]').val(edu);
+    //$(':radio[value="'+sex+'"]').attr('checked',true);
+</script>
+<script>
+    $(function () {
+        deleteStu = function (a) {
+            console.log($(a));
+            var stuId = $(a).parent().data('stu-id');
+            var tr = $(a).parent().parent();
+            alert(stuId);
+            $.ajax({
+                url: "/stu/delete/" + stuId,
+                async: true,
+                cache: true,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        alert("删除用户成功");
+                        tr.remove();
+                        //location.replace(location.href);
+                        //刷新页面失败
+                        return false;
+                    } else {
+                        alert("删除用户失败");
+                        return false;
+                    }
+                }
+            })
+
+        };
+    })
+</script>
+<!--<script>
+    var xhr = new XMLHttpRequest();
+    xhr.onload=function(){
+        if (this.status == 200){
+            var data = JSON.parse(this.responseText);
+            var result = "<table>";
+            for (var i=0;i<data.length;i++){
+                result +="<tr>"
+            }
+        }
+    }
+    xhr.open();
+</script>-->
+</body>
+</html>

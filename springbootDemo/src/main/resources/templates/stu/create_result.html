@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>添加结果</title>
+</head>
+<body>
+<!--thymleaf语法模板-->
+<div th:switch="${rows}">
+    <span th:case="1" style="color: rgb(0,0,255,0.5)">添加成功</span>
+    <span th:case="*" style="color: rgb(21,234,43,0.5)">未知操作</span>
+</div>
+</body>
+</html>

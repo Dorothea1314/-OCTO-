@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加学生</title>
+</head>
+<script src="/js/jquery-3.4.1.js"></script>
+<!--<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>-->
+<body>
+<!--控制器的提交mapping-->
+<!--form表单控件有没有name属性 ,name名称与实体类定义的属性是否相同，且区分大小写 ，打包成一个对象-->
+<form action="/stu/create" id="myForm" method="post"  onsubmit="return ret()" >
+    <div><h3>添加学生</h3></div>
+
+    <div>
+        <ul style="list-style: none">
+            <li><span>姓名：</span><input type="text" name="name" placeholder="请输入用户名" required maxlength="4"/></li>
+            <li><span>性别：</span><label><input type="radio" name="sex" value="1">&nbsp;男</label>
+                                  <label><input type="radio" name="sex" value="2">&nbsp;女</label>
+            </li>
+            <li><span>身份证：</span><input type="text" name="idCard" placeholder="请输入身份证号" maxlength="18"></li>
+            <li><span>出生日期：</span><input type="date" name="birthday" placeholder="请输入出生日期"></li>
+            <li><span>专业：</span><input type="text" name="subject" placeholder="请输入专业"></li>
+            <li><sResultpan>学历：</sResultpan>
+            <select name="edu">
+                <option disabled="disabled">----请选择学历----</option>
+                <option value="1">中专</option>
+                <option value="2">大专</option>
+                <option value="3">本科</option>
+                <option value="4">研究生</option>
+                <option value="5">其他</option>
+            </select>
+            </li>
+            <li>
+                <!--<input type="submit" value="提交"  id="tijiao">-->
+                <button type="submit">提交</button>
+                <input type="reset" value="重置">
+            </li>
+        </ul>
+    </div>
+</form>
+<script>
+function ret(){
+    if (confirm("您确认提交吗？")){
+        return true;
+    }else {
+        return false;
+    };
+    /*没实现*/
+    $(document).ready(function(){
+        $("button").on("click",function(){
+            /*var version = $().jquery;
+            alert("你正在运行的jQuery版本为: " + version);*/
+            alert("设置保存成功！");
+        });
+    });
+
+}
+</script>
+</body>
+</html>
